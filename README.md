@@ -385,34 +385,159 @@ The system can now:
 
 # Next Stage
 
-# 4. Stage 4 — Conversational AI Layer
+# 4. Stage 4 — LLM Query Understanding
 
-The next step is to transform the system from a simple search tool into a **conversational real estate assistant**.
+## 4.1 Goal
 
-In this stage we will:
+The goal of this stage is to enable the system to understand **natural language property search requests** and convert them into structured filters that can be used by the search engine.
 
-- Use an **LLM (Large Language Model)** to understand user requests
-- Convert natural language queries into search filters
-- Generate conversational responses instead of raw data output
-- Suggest relevant properties to the user
-- Ask follow-up questions to improve the search
+Instead of forcing users to manually select filters like city, price, and bedrooms, users can now type natural language queries such as:
 
-Example user request:
+"Show me a 3 bedroom apartment in Nasr City under 3 million."
 
-```
-I want a 3 bedroom apartment in Nasr City under 3 million
-```
+The system will analyze the request and automatically extract the required filters.
 
-The AI will convert it to:
+This step transforms the system from a simple search tool into an **AI-powered property assistant**.
 
-```json
+---
+
+## 4.2 LLM Provider
+
+To understand user queries, the system integrates with a **Large Language Model (LLM)**.
+
+For this project we used:
+
+Groq API
+
+Model used:
+
+llama-3.1-8b-instant
+
+Reasons for choosing this model:
+
+- Free API access
+- Very fast response time
+- Good support for both Arabic and English
+- Easy Python integration
+
+---
+
+## 4.3 LLM Integration
+
+A new file was created in the project:
+
+llm.py
+
+This file is responsible for handling all communication with the LLM.
+
+The system sends a carefully designed prompt to the model asking it to extract search filters from the user’s message.
+
+The LLM then returns a structured JSON response containing the extracted filters.
+
+---
+
+## 4.4 Extract Filters Function
+
+Inside `llm.py`, a function called:
+
+extract_filters()
+
+was implemented.
+
+This function performs the following steps:
+
+1. Receives the user's query in natural language
+2. Sends the query to the LLM with a prompt
+3. Requests the response in JSON format
+4. Converts the JSON output into a Python dictionary
+
+Example user query:
+
+I want a 3 bedroom apartment in Nasr City under 3000000
+
+Expected extracted filters:
+
 {
   "city": "Nasr City",
   "bedrooms": 3,
   "max_price": 3000000
 }
-```
 
-Then send these filters to the **Property Search Engine**.
+These filters are then passed to the search engine created in Stage 3.
 
-This will allow the chatbot to behave like a **real estate assistant instead of a simple search tool**.
+---
+
+## 4.5 Generating Conversational Responses
+
+Another function was added:
+
+generate_response()
+
+This function uses the LLM to produce **natural conversational replies** based on the search results.
+
+Instead of returning raw data from the dataset, the chatbot summarizes the results and communicates with the user in a friendly way.
+
+Example response:
+
+I found several apartments in Nasr City within your budget.
+One of the best options is a 3-bedroom apartment with a good area and price close to your limit.
+Would you prefer something ready to move or under construction?
+
+---
+
+## 4.6 Multilingual Support
+
+The chatbot was designed to support **both Arabic and English**.
+
+The prompt instructs the LLM to respond in the **same language used by the user**.
+
+Examples:
+
+User query in English:
+
+I want an apartment in Nasr City under 3 million
+
+Chatbot response:
+
+I found several apartments in Nasr City within your budget.
+
+User query in Arabic:
+
+عايز شقة في مدينة نصر تحت ٣ مليون
+
+Chatbot response:
+
+وجدت لك عدة شقق في مدينة نصر ضمن الميزانية المحددة.
+
+---
+
+## 4.7 Testing the LLM Integration
+
+The LLM functionality was tested using the file:
+
+test.py
+
+Example test query:
+
+user_query = "I want a 3 bedroom apartment in Nasr City under 3000000"
+
+The testing process confirmed that the system can:
+
+1. Understand the user's request
+2. Extract structured filters
+3. Search the dataset
+4. Generate a natural chatbot response
+
+---
+
+## Stage 4 Result
+
+After completing this stage, the system can now:
+
+✔ Understand natural language property search requests  
+✔ Extract structured filters automatically  
+✔ Search the dataset based on user intent  
+✔ Generate conversational responses  
+✔ Support both Arabic and English queries
+
+The project has now evolved from a simple filter system into an **AI-powered real estate assistant**.
