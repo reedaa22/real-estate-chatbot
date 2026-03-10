@@ -26,36 +26,20 @@ or
 
 ---
 
-## Project Development Stages
-
 ## Project Roadmap
 
 The project will be developed through the following stages:
 
 1. Project Setup  
-   Preparing the development environment, creating the GitHub repository, and organizing the project structure.
-
 2. Data Preparation  
-   Loading the real estate dataset, cleaning the data, and preparing it for processing.
-
 3. Property Search Engine  
-   Building the core filtering and search system that retrieves properties from the dataset.
-
-4. LLM Query Understanding  
-   Using an LLM (Large Language Model) to understand user requests and convert them into structured filters.
-
+4. Conversational AI Layer (LLM)  
 5. Chat Interface  
-   Creating a chatbot interface where users can interact with the system.
-
 6. Backend API  
-   Building a backend API that allows the chatbot to communicate with external systems such as websites.
-
 7. Website Integration  
-   Connecting the chatbot to a real estate website so users can search properties directly.
-
 8. System Improvements & Optimization  
-   Improving search ranking, performance, and adding advanced AI features.
-Currently we have completed **Stage 1 and Stage 2**.
+
+Currently we have completed **Stage 1, Stage 2, and Stage 3**.
 
 ---
 
@@ -107,6 +91,7 @@ The following project structure was created:
 real-estate-chatbot
 │
 ├── data
+│   └── Houses.csv
 │
 ├── utils.py
 ├── test.py
@@ -122,7 +107,7 @@ Contains the dataset used in the project.
 Contains helper functions used across the project.
 
 **test.py**  
-Used for testing the data loading process.
+Used for testing project functionality.
 
 **README.md**  
 Contains documentation for the project.
@@ -265,32 +250,23 @@ This prints the first five rows of the dataset to confirm that the data was load
 
 ---
 
-# Current Progress
-
-✔ Stage 1 — Project Setup  
-✔ Stage 2 — Data Preparation  
-
----
-
-# Next Stage
-
 # 3. Stage 3 — Property Search Engine
 
 ## 3.1 Goal
 
-The goal of this stage is to build the **core property search engine** that allows the system to retrieve properties from the dataset based on specific filters.
+Build the **core property search engine** that retrieves properties from the dataset using filters.
 
-Instead of manually browsing thousands of rows in the dataset, the system can filter properties automatically based on conditions such as:
+Instead of manually browsing thousands of rows, the system automatically filters properties based on conditions such as:
 
 - City
-- Number of Bedrooms
+- Bedrooms
 - Maximum Price
 
 ---
 
 ## 3.2 Search Function
 
-A new function called `search_properties()` was implemented in:
+A function called `search_properties()` was implemented in:
 
 ```
 utils.py
@@ -311,27 +287,23 @@ filters = {
 }
 ```
 
-The function then filters the dataset step-by-step.
-
 ---
 
 ## 3.3 Filtering by City
 
-The system checks if a city filter exists and filters the dataset accordingly.
-
-Example logic:
+The system filters properties by city using:
 
 ```python
-results["City"].str.contains(filters["city"])
+results["City"].str.contains(filters["city"], case=False)
 ```
 
-This allows flexible matching while ignoring case differences.
+This allows flexible matching while ignoring letter case.
 
 ---
 
 ## 3.4 Filtering by Bedrooms
 
-The system filters the dataset to include only properties with the requested number of bedrooms.
+The system filters properties based on the requested number of bedrooms.
 
 Example:
 
@@ -343,9 +315,7 @@ results["Bedrooms"] == filters["bedrooms"]
 
 ## 3.5 Filtering by Maximum Price
 
-The dataset is filtered to include only properties with price less than or equal to the requested maximum price.
-
-Example:
+Properties are filtered by maximum price:
 
 ```python
 results["Price"] <= filters["max_price"]
@@ -367,20 +337,28 @@ results.head(10)
 
 ## 3.7 Testing the Search Engine
 
-The search engine was tested using the file:
+The search engine was tested using:
 
 ```
 test.py
 ```
 
-Example test:
+Example:
 
 ```python
+from utils import load_data, search_properties
+
+df = load_data()
+
 filters = {
     "city": "Nasr City",
     "bedrooms": 3,
     "max_price": 3000000
 }
+
+results = search_properties(df, filters)
+
+print(results)
 ```
 
 Running the test confirmed that the system correctly returns matching properties from the dataset.
@@ -392,5 +370,49 @@ Running the test confirmed that the system correctly returns matching properties
 The system can now:
 
 - Load the dataset
-- Apply search filters
-- Retrieve matching properties from thousands of listings
+- Apply property filters
+- Retrieve matching listings from thousands of properties
+
+---
+
+# Current Progress
+
+✔ Stage 1 — Project Setup  
+✔ Stage 2 — Data Preparation  
+✔ Stage 3 — Property Search Engine  
+
+---
+
+# Next Stage
+
+# 4. Stage 4 — Conversational AI Layer
+
+The next step is to transform the system from a simple search tool into a **conversational real estate assistant**.
+
+In this stage we will:
+
+- Use an **LLM (Large Language Model)** to understand user requests
+- Convert natural language queries into search filters
+- Generate conversational responses instead of raw data output
+- Suggest relevant properties to the user
+- Ask follow-up questions to improve the search
+
+Example user request:
+
+```
+I want a 3 bedroom apartment in Nasr City under 3 million
+```
+
+The AI will convert it to:
+
+```json
+{
+  "city": "Nasr City",
+  "bedrooms": 3,
+  "max_price": 3000000
+}
+```
+
+Then send these filters to the **Property Search Engine**.
+
+This will allow the chatbot to behave like a **real estate assistant instead of a simple search tool**.
