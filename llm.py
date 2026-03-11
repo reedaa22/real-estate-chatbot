@@ -47,7 +47,7 @@ User request:
             json_text = content[start:end+1]
             return json.loads(json_text)
 
-        raise ValueError("LLM did not return valid JSON")
+        return{}
 
 
 def generate_response(user_query, results_text):
